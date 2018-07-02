@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+  <head>
+    <link href="../../src/css/ui.css" rel="stylesheet" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      #md {
+        display: none;
+      }
+
+      body {
+        line-height: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <button id="btn_remind">btn-remind</button>
+    <button id="btn_warning">btn-warning</button>
+    <button id="btn_success">btn-success</button>
+    <script src="../jquery.js"></script>
+    <script src="../../src/js/Dialog.js"></script>
+    <script>
+       $('#btn_remind').click(function () {
+        new Dialog().alert('操作成功！！！', [{
+          text: '详情',
+          events: function () {
+            alert('mddd');
+          }
+        }, {
+          text: '射的快',
+          events: function () {
+            alert('射的快');
+          }
+        }], 'success');
+       });
+       $('#btn_warning').click(function () {});
+       $('#btn_success').click(function () {});
+    </script>
+  </body>
+</html>

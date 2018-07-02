@@ -1,0 +1,151 @@
+@charset "UTF-8";
+
+/**
+ * 对话框
+ */
+:root .ui-dialog-container {
+  display: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(25, 28, 34, 0.88);
+  text-align: center;
+  color: #4c5161;
+  font-size: 14px;
+  z-index: 29;
+  user-select: none;}
+
+/* 如果页面存在多个对话框，则干掉其他对话框的背景层 */
+:root .ui-dialog-container + .ui-dialog-container {
+  background-color: transparent; }
+
+:root .ui-dialog-container:after {
+  content: "";
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle; }
+
+:root .ui-dialog-inner {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  min-width: 400px;
+  border-radius: 2px;
+  background-color: #f7f9fa;
+  padding: 0 25px;
+  box-sizing: border-box; }
+
+:root .ui-dialog-title {
+  line-height: 30px;
+  padding-top: 15px;
+  font-weight: 700;
+  color: #4c5161;
+  user-select: none; }
+
+:root .ui-dialog-close {
+  position: absolute;
+  right: 25px;
+  top: 18px;
+  width: 15px;
+  height: 15px; }
+
+:root .ui-dialog-close > svg {
+  width: 100%;
+  height: 100%;
+}
+
+.ui-dialog-body {
+  padding: 50px 0 40px; }
+
+/**
+ * 设置 `remind`、`success`、`warning`等三种对话框
+ */
+.ui-dialog-success, .ui-dialog-remind, .ui-dialog-warning {
+  min-height: 40px;
+  font-size: 16px;
+  word-break: break-all;
+  position: relative; }
+
+.ui-dialog-success svg, .ui-dialog-remind svg, .ui-dialog-warning svg {
+  width: 20px;
+  height: 20px;
+}
+
+.ui-dialog-success > i, .ui-dialog-remind > i, .ui-dialog-warning > i {
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 40px;
+  height: 40px;
+  line-height: 44px;
+  border-width: 2px;
+  border-style: solid;
+  text-align: center;
+  box-sizing: border-box;
+  border-radius: 100%; }
+
+.ui-dialog-success > i {
+  border-color: #01cf97; }
+
+.ui-dialog-remind > i {
+  border-color: #2486ff; }
+
+.ui-dialog-warning > i {
+  border-color: #f4615c; }
+
+.ui-dialog-success > div, .ui-dialog-remind > div, .ui-dialog-warning > div {
+  display: -webkit-box;
+  padding-left: 60px;
+  min-height: 40px;
+  -webkit-box-align: center;
+  text-align: left; }
+
+.ui-dialog-footer {
+  padding-bottom: 25px;
+  max-height: 40px;
+  text-align: right; }
+
+.ui-dialog-button {
+  display: inline-block;
+  line-height: 20px;
+  font-size: 14px;
+  border-radius: 4px;
+  padding: 9px 15px;
+  margin-left: 15px;
+  min-width: 50px;
+  border-width: 1px;
+  color: #fff;
+  border-style: solid;
+  text-align: center;
+  text-decoration: none;}
+
+.ui-dialog-button:first-of-type {
+  margin-left: 0;
+}
+
+.ui-dialog-button-remind {
+  background: #2486ff;
+  border-color: #2486ff; }
+
+.ui-dialog-button-remind:hover {
+  background-color: #0160d5;
+  border-color: #0160d5; }
+
+.ui-dialog-button-success {
+  background: #01cf97;
+  border-color: #01cf97; }
+
+.ui-dialog-button-success:hover {
+  background-color: #00dba2;
+  border-color: #00dba2; }
+
+.ui-dialog-button-warning {
+  background: #f4615c;
+  border-color: #f4615c; }
+
+.ui-dialog-button-warning:hover {
+  background-color: #ff7772;
+  border-color: #ff7772; }
