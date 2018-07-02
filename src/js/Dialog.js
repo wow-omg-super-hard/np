@@ -111,7 +111,7 @@ var Dialog = function (options) {
  */
 Dialog.prototype.alert = function (content, buttons, type) {
   var params = {
-    content: content || '',
+    content: $.isFunction(content) ? content() : (content || ''),
     buttons: buttons || [{ text: '确定' }],
     type: type || 'remind'
   };
@@ -139,10 +139,11 @@ Dialog.prototype.alert = function (content, buttons, type) {
 
 Dialog.prototype._createFooterContent = function (buttons, type) {
   var self = this;
-  var text, events, btn;
+  var type, text, events, btn;
 
   $.each(buttons, function (idx, button) {
     text = button.text || (!idx ? '确定' : '取消');
+
     events = $.proxy(button.events || function () { this.remove(); }, self);
     btn = $('<a href="javascript:;" class="'+ prefixBtn +' '+ prefix + splitter + 'button' + splitter + type +'">'+ text +'</a>').bind('click', events).appendTo(self.el.footer);
 
