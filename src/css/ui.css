@@ -149,3 +149,13 @@
 .ui-dialog-button-warning:hover {
   background-color: #ff7772;
   border-color: #ff7772; }
+
+.ui-dialog-button-default {
+  background-color: #fff;
+  border-color: #d0d0d5;
+  color: #4c5161;
+}
+
+.ui-dialog-button-default:hover {
+  border-color: #ababaf;
+}

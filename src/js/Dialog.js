@@ -139,13 +139,13 @@ Dialog.prototype.alert = function (content, buttons, type) {
 
 Dialog.prototype._createFooterContent = function (buttons, type) {
   var self = this;
-  var type, text, events, btn;
+  var text, events, btn;
 
   $.each(buttons, function (idx, button) {
     text = button.text || (!idx ? '确定' : '取消');
-
+    type = button.type || (!idx ? type : void 0)
     events = $.proxy(button.events || function () { this.remove(); }, self);
-    btn = $('<a href="javascript:;" class="'+ prefixBtn +' '+ prefix + splitter + 'button' + splitter + type +'">'+ text +'</a>').bind('click', events).appendTo(self.el.footer);
+    btn = $('<a href="javascript:;" class="'+ prefixBtn +' '+ prefix + splitter + 'button' + splitter + (type || 'default') +'">'+ text +'</a>').bind('click', events).appendTo(self.el.footer);
 
     self.el.footer.append(btn);
   });

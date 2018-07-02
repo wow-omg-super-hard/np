@@ -24,7 +24,7 @@
     <script src="../../src/js/Dialog.js"></script>
     <script>
        $('#btn_remind').click(function () {
-        new Dialog().alert(false, [{
+        new Dialog().alert('你确定要射了吗?', [{
           text: '详情',
           events: function () {
             alert('mddd');
@@ -34,7 +34,7 @@
           events: function () {
             alert('射的快');
           }
-        }], 'success');
+        }], 'warning');
        });
        $('#btn_warning').click(function () {});
        $('#btn_success').click(function () {});
