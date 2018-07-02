@@ -20,6 +20,7 @@
     <button id="btn_remind">btn-remind</button>
     <button id="btn_warning">btn-warning</button>
     <button id="btn_success">btn-success</button>
+    <div style="height: 3000px"></div>
     <script src="../jquery.js"></script>
     <script src="../../src/js/Dialog.js"></script>
     <script>
@@ -34,9 +35,18 @@
           events: function () {
             alert('射的快');
           }
-        }], 'warning');
+        }], 'success');
        });
-       $('#btn_warning').click(function () {});
+       $('#btn_warning').click(function () {
+         new Dialog().confirm('需要服务吗？', '哈哈哈哈哈，舒服', [{
+           text: '射的准',
+           events: function () {
+             console.log('df');
+             this.remove();
+           }
+         }], 'warning');
+
+       });
        $('#btn_success').click(function () {});
     </script>
   </body>

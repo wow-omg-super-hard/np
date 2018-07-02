@@ -112,7 +112,7 @@ var Dialog = function (options) {
 Dialog.prototype.alert = function (content, buttons, type) {
   var params = {
     content: $.isFunction(content) ? content() : (content || ''),
-    buttons: buttons || [{ text: '确定' }],
+    buttons: buttons || [{ text: '确定', type: type }],
     type: type || 'remind'
   };
   var contentChild = null;
@@ -135,7 +135,55 @@ Dialog.prototype.alert = function (content, buttons, type) {
 
   //添加footer并且显示对话框
   this._createFooterContent(params.buttons, params.type)._show();
-}
+};
+
+/**
+ * confirm 确认对话框
+ *
+ */
+Dialog.prototype.confirm = function (title, content, buttons, type) {
+  var params = {
+    title: title || '',
+    content: $.isFunction(content) ? content() : (content || ''),
+    buttons: buttons || [{ type: type, text: '确定' }, {}],
+    type: type || 'remind'
+  };
+
+  var contentChild = null;
+
+  // 因为confirm对话框必须有两个按钮，检查是否小于2个或大于两个
+  if (params.buttons.length < 2) {
+    params.buttons.push({});
+  } else if (params.buttons.length > 2) {
+    params.buttons.splice(params.buttons.length - 1, 1);
+  }
+
+  // 如果写错了type，导致会写错class，所以引用不到，样式就会错乱
+  params.type !== 'remind' && params.type !== 'success' && params.type !== 'warning' && (params.type = 'remind');
+
+  this.el.container.addClass(prefix + splitter + 'confirm');
+
+  // 如果标题是纯文本
+  if (!/<[\w\W]*?>/.test(params.title)) {
+    params.title = '<p>'+ params.title +'</p>';
+  }
+
+  // 如果内容是纯文本
+  if (!/<[\w\W]*?>/.test(params.content)) {
+    params.content = '<p>'+ params.content +'</p>';
+  }
+
+  contentChild = $('<div class="'+ prefix + splitter + params.type +'"><div>'+ params.content +'</div></div>').prepend('<i>'+ (params.type === 'remind' ? remindSVG : params.type === 'success' ? tickSVG : crossSVG) +'</i>');
+
+  // 添加标题
+  this.el.title.html(params.title);
+
+  // 添加内容
+  this.el.body.empty().append(contentChild);
+
+  // 添加尾部内容并且显示确认对话框
+  this._createFooterContent(params.buttons, params.type)._show();
+};
 
 Dialog.prototype._createFooterContent = function (buttons, type) {
   var self = this;
@@ -194,7 +242,7 @@ Dialog.prototype.remove = function () {
   }
 
   return this;
-}
+};
 
 return Dialog;
 }, jQuery);
