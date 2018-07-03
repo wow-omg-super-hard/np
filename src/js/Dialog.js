@@ -1,7 +1,7 @@
 /**
  * @Dialog.js
  * @author zengwenbin
- * @version
+ * @version 1.0
  * Created 18-6-28
  */
 
@@ -15,7 +15,7 @@
     // 浏览器直接引用
     root.Dialog = factory($);
   }
-})(window, function ($) {
+})(this, function ($) {
 // 元素class
 var splitter = '-';
 var prefix = 'ui-dialog';
@@ -135,6 +135,8 @@ Dialog.prototype.alert = function (content, buttons, type) {
 
   //添加footer并且显示对话框
   this._createFooterContent(params.buttons, params.type)._show();
+
+  return this;
 };
 
 /**
@@ -183,6 +185,8 @@ Dialog.prototype.confirm = function (title, content, buttons, type) {
 
   // 添加尾部内容并且显示确认对话框
   this._createFooterContent(params.buttons, params.type)._show();
+
+  return this;
 };
 
 Dialog.prototype._createFooterContent = function (buttons, type) {

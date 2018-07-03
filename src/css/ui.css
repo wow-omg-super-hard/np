@@ -1,6 +1,17 @@
 @charset "UTF-8";
 
 /**
+ * 拖拽（交互）
+ */
+:root .ui-drag-action {
+   cursor: move;
+   user-select: none;
+   -webkit-transform: translate(0, 0);
+   -moz-transform: translate(0, 0);
+   -ms-transform: translate(0, 0);
+   transform: translate(0, 0); }
+
+/**
  * 对话框
  */
 :root .ui-dialog-container {
@@ -14,8 +25,7 @@
   text-align: center;
   color: #4c5161;
   font-size: 14px;
-  z-index: 29;
-  user-select: none;}
+  z-index: 29;}
 
 /* 如果页面存在多个对话框，则干掉其他对话框的背景层 */
 :root .ui-dialog-container + .ui-dialog-container {
@@ -41,8 +51,7 @@
   line-height: 30px;
   padding-top: 15px;
   font-weight: 700;
-  color: #4c5161;
-  user-select: none; }
+  color: #4c5161;}
 
 :root .ui-dialog-close {
   position: absolute;
