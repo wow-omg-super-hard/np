@@ -81,6 +81,7 @@
     var offsetX = this.offsetX;
     var offsetY = this.offsetY;
 
+    // 限制当用户在规定的el上mousedown才启动mousemove
     if (this.isDraging) {
       // 记录当前坐标和上个坐标之间的差值
       offsetX = (e.clientX - this.currX) + offsetX;
@@ -92,12 +93,16 @@
   };
 
   Drag.prototype._dragEndHandle = function (e) {
+    // 限制当用户在规定的el上mousedown才启动mousemove
+    // 避免对body点击，然后mouseup的时候也记录偏移量导致错误
+    if (this.isDraging) {
+      this.offsetX = (e.clientX - this.currX) + this.offsetX;
+      this.offsetY = (e.clientY - this.currY) + this.offsetY;
+
+      this.callbacks.onDragEnd.call(this, this.offsetX, this.offsetY);
+    }
+
     this.isDraging = false;
-
-    this.offsetX = (e.clientX - this.currX) + this.offsetX;
-    this.offsetY = (e.clientY - this.currY) + this.offsetY;
-
-    this.callbacks.onDragEnd.call(this, this.offsetX, this.offsetY);
   };
 
   return Drag;
