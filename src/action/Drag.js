@@ -20,14 +20,14 @@
 
     // 公共的属性
     var defaults = {
-      com: $(void 0),
+      el: $(void 0),
       onDragStart: $.noop,
       onDrag: $.noop,
       onDragEnd: $.noop
     };
     var params = $.extend({}, defaults, options);
 
-    this.el = params.com;
+    this.el = params.el;
     this.callbacks = {
       onDragStart: params.onDragStart,
       onDrag: params.onDrag,
@@ -96,7 +96,7 @@
 
     this.offsetX = (e.clientX - this.currX) + this.offsetX;
     this.offsetY = (e.clientY - this.currY) + this.offsetY;
-    
+
     this.callbacks.onDragEnd.call(this, this.offsetX, this.offsetY);
   };
 
