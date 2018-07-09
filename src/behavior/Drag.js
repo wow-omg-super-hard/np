@@ -16,11 +16,9 @@
   }
 })(this, function ($) {
   var Drag = function (options) {
-    options || (options = {});
-
     // 公共的属性
     var defaults = {
-      el: $(void 0),
+      el: $(),
       onDragStart: $.noop,
       onDrag: $.noop,
       onDragEnd: $.noop

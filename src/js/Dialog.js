@@ -105,12 +105,14 @@ var Dialog = function (options) {
  * 弹出框
  * remind(提醒)、success(成功)、warning(警告)
  *
+ * @param { String } title
  * @param { String } content 弹出框显示内容
  * @param { Array(JSON) } buttons 按钮信息
  * @param { String } type 弹出框类型
  */
-Dialog.prototype.alert = function (content, buttons, type) {
+Dialog.prototype.alert = function (title, content, buttons, type) {
   var params = {
+    title: '',
     content: $.isFunction(content) ? content() : (content || ''),
     buttons: buttons || [{ text: '确定', type: type }],
     type: type || 'remind'
@@ -123,12 +125,20 @@ Dialog.prototype.alert = function (content, buttons, type) {
   // 添加对话框容器元素class
   this.el.container.addClass(prefix + splitter + 'alert');
 
+  // 如果标题是纯文本
+  if (!/<[\w\W]*?>/.test(params.title)) {
+    params.title = '<p>'+ params.title +'</p>';
+  }
+
   // 如果内容是纯文本
   if (!/<[\w\W]*?>/.test(params.content)) {
     params.content = '<p>'+ params.content +'</p>';
   }
 
   contentChild = $('<div class="'+ prefix + splitter + params.type +'"><div>'+ params.content +'</div></div>').prepend('<i>'+ (params.type === 'remind' ? remindSVG : params.type === 'success' ? tickSVG : crossSVG) +'</i>');
+
+  // 添加title
+  this.el.title.html(params.title);
 
   // 添加content
   this.el.body.empty().append(contentChild);
@@ -141,7 +151,6 @@ Dialog.prototype.alert = function (content, buttons, type) {
 
 /**
  * confirm 确认对话框
- *
  */
 Dialog.prototype.confirm = function (title, content, buttons, type) {
   var params = {
@@ -193,16 +202,38 @@ Dialog.prototype._createFooterContent = function (buttons, type) {
   var self = this;
   var text, events, btn;
 
+  self.el.footer.empty();
+
   $.each(buttons, function (idx, button) {
     text = button.text || (!idx ? '确定' : '取消');
     type = button.type || (!idx ? type : void 0)
     events = $.proxy(button.events || function () { this.remove(); }, self);
     btn = $('<a href="javascript:;" class="'+ prefixBtn +' '+ prefix + splitter + 'button' + splitter + (type || 'default') +'">'+ text +'</a>').bind('click', events).appendTo(self.el.footer);
-
-    self.el.footer.append(btn);
   });
 
   return self;
+};
+
+/**
+ * 从一种状态(alert|confirm)切换成(confirm|alert)状态等
+ * 其实就是将对话框里的title、body、footer替换内容
+ */
+Dialog.prototype.switch = function (options) {
+  var defaults = {
+    title: '',
+    content: '',
+    buttons: [{}]
+  };
+  var type = options.type || 'remind';
+  var params = $.extend({}, defaults, options);
+
+  if (this.el && this.display) {
+    this.el.title.html(params.title);
+    this.el.body.html($.isFunction(content) ? content() : (content == null ? '' : content));
+    this._createFooterContent()._show(params.buttons, type);
+  }
+
+  return this;
 };
 
 /**
@@ -226,23 +257,23 @@ Dialog.prototype._scroll = function () {
   return this;
 };
 
-
 Dialog.prototype._show = function () {
-  if (this.el && this.el.container && !this.display) {
-    this.el.container.css('display', 'block');
+  if (this.el && !this.display) {
     this.el.dialog.addClass(prefix + splitter + 'animation');
     this._scroll();
     this.display = true;
     this.callbacks.onShow.call(this, this.el.container);
+    this.el.container.css('display', 'block');
   }
 };
 
 Dialog.prototype.remove = function () {
-  if (this.el && this.el.container && this.display) {
-    this.el.container.remove();
+  if (this.el && this.display) {
     this._scroll();
     this.display = false;
     this.callbacks.onRemove.call(this, this.el.container);
+    this.el.container.remove();
+    delete this.el;
   }
 
   return this;

@@ -12,6 +12,27 @@
    transform: translate(0, 0); }
 
 /**
+ * 滚动加载（交互）
+ */
+:root .ui-scrollload-action {
+  overflow-y: auto; }
+
+:root .ui-scrollload-action.pos {
+  position: relative; }
+
+.ui-scrollload-action .loading {
+  display: none;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  line-height: 30px;
+  text-align: center;
+  color: #f1f1f1;
+  font-size: 14px;
+  background-color: rgba(25, 28, 34, 0.88); }
+
+/**
  * 对话框
  */
 :root .ui-dialog-container {

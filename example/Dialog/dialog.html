@@ -22,52 +22,66 @@
     <button id="btn_success">btn-success</button>
     <div style="height: 3000px"></div>
     <script src="../jquery.js"></script>
-    <script src="../../src/action/Drag.js"></script>
+    <script src="../../src/behavior/Drag.js"></script>
     <script src="../../src/js/Dialog.js"></script>
     <script>
-       $('#btn_remind').click(function () {
-        var remind = new Dialog({
-          onRemove: function () {
-            // 内存回收
-            allowDrag = null;
-          }
-        }).alert('你确定要射了吗?', [{
-          text: '详情',
-          events: function () {
-            alert('mddd');
-          }
-        }, {
-          text: '射的快',
-          events: function () {
-            alert('射的快');
-          }
-        }], 'success');
-
-        // 拖拽
-        var allowDrag = new Drag({
-          el: remind.el.dialog,
-          onDragStart: function (offsetX, offsetY) {
-            console.log('start:', offsetX, offsetY);
-          },
-          onDrag: function (offsetX, offsetY) {
-            console.log('drag:', offsetX, offsetY);
-          },
-          onDragEnd: function (offsetX, offsetY) {
-            console.log('end:', offsetX, offsetY);
-          }
-        });
+       $.ajax({
+         url: 'https://www.easy-mock.com/mock/5b4304e63ad69e46995859f6/ui-com/getScrollList',
+         type: 'GET',
+         dataType: 'JSON',
+         timeout: 30000,
+         data: void 0,
+         contentType: 'application/json',
+         success: function (resp) {
+           console.log(resp);
+         },
+         error: function (_, status) {
+          console.log(status);
+         }
        });
-       $('#btn_warning').click(function () {
-         new Dialog().confirm('需要服务吗？', '哈哈哈哈哈，舒服', [{
-           text: '射的准',
-           events: function () {
-             console.log('df');
-             this.remove();
-           }
-         }], 'warning');
-
-       });
-       $('#btn_success').click(function () {});
+       // $('#btn_remind').click(function () {
+       //  var remind = new Dialog({
+       //    onRemove: function () {
+       //      // 内存回收
+       //      allowDrag = null;
+       //    }
+       //  }).alert('你确定要射了吗?', [{
+       //    text: '详情',
+       //    events: function () {
+       //      alert('mddd');
+       //    }
+       //  }, {
+       //    text: '射的快',
+       //    events: function () {
+       //      alert('射的快');
+       //    }
+       //  }], 'success');
+       //
+       //  // 拖拽
+       //  var allowDrag = new Drag({
+       //    el: remind.el.dialog,
+       //    onDragStart: function (offsetX, offsetY) {
+       //      console.log('start:', offsetX, offsetY);
+       //    },
+       //    onDrag: function (offsetX, offsetY) {
+       //      console.log('drag:', offsetX, offsetY);
+       //    },
+       //    onDragEnd: function (offsetX, offsetY) {
+       //      console.log('end:', offsetX, offsetY);
+       //    }
+       //  });
+       // });
+       // $('#btn_warning').click(function () {
+       //   new Dialog().confirm('需要服务吗？', '哈哈哈哈哈，舒服', [{
+       //     text: '射的准',
+       //     events: function () {
+       //       console.log('df');
+       //       this.remove();
+       //     }
+       //   }], 'warning');
+       //
+       // });
+       // $('#btn_success').click(function () {});
     </script>
   </body>
 </html>

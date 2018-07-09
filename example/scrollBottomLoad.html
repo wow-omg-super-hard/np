@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link href="../src/css/ui.css" rel="stylesheet" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      #md {
+        display: none;
+      }
+
+      body {
+        line-height: 1;
+      }
+      .xx {
+        height: 300px;
+        border: 1px solid green;
+        padding: 30px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="xx"></div>
+
+    <script src="./jquery.js"></script>
+    <script src="../src/util/throttle.js"></script>
+    <script src="../src/js/Dialog.js"></script>
+    <script src="../src/util/fetch.js"></script>
+    <script src="../src/behavior/ScrollBottomLoad.js"></script>
+    <script>
+      new ScrollBottomLoad({
+        el: $('.xx'),
+        url: 'https://www.easy-mock.com/mock/5b4304e63ad69e46995859f6/ui-com/getScrollList',
+        onScrollToBottom: function (el, resp) {
+          for(var i = 0, len = resp.length; i < len; i++) {
+            el.append('<div style="height: 200px;background-color:blue"><h1>'+ resp[i].title +'</h1><p>'+ resp[i].des +'</p></div>');
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
