@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
   <head>
+    <meta charset="utf-8" />
     <link href="../../src/css/ui.css" rel="stylesheet" />
     <style>
       * {
@@ -17,28 +18,50 @@
     </style>
   </head>
   <body>
-    <button id="btn_remind">btn-remind</button>
-    <button id="btn_warning">btn-warning</button>
-    <button id="btn_success">btn-success</button>
-    <div style="height: 3000px"></div>
+    <button id="btn_alert">btn-alert</button>
+    <button id="btn_confirm">btn-confirm</button>
+    <button id="btn_custom">btn-custom</button>
+    <button id="btn_ajax">btn-ajax</button>
+    <div style="height: 3000px" id=""></div>
     <script src="../jquery.js"></script>
-    <script src="../../src/behavior/Drag.js"></script>
+    <script src="../../src/util/fetch.js"></script>
     <script src="../../src/js/Dialog.js"></script>
     <script>
-       $.ajax({
-         url: 'https://www.easy-mock.com/mock/5b4304e63ad69e46995859f6/ui-com/getScrollList',
-         type: 'GET',
-         dataType: 'JSON',
-         timeout: 30000,
-         data: void 0,
-         contentType: 'application/json',
-         success: function (resp) {
-           console.log(resp);
-         },
-         error: function (_, status) {
-          console.log(status);
-         }
-       });
+      $('#btn_alert').click(function () {
+        new Dialog().alert('alert弹出框', '哈哈哈', [{ text: '帅的不谈', type: 'success', events: function () { alert('dddddd');this.remove(); } }], 'warning');
+        // setTimeout(function () {
+        //   new Dialog().alert('', '哈哈哈', null, 'success');
+        // }, 2000);
+      });
+
+      $('#btn_confirm').click(function () {
+        new Dialog().confirm('', '确认要离开吗?', null, 'success');
+      });
+
+      $('#btn_custom').click(function () {
+        new Dialog().custom('alert弹出框', '哈哈哈', null);
+      });
+
+      $('#btn_ajax').click(function () {
+        new Dialog().ajax({ url: 'https://www.easy-mock.com/mock/5b4304e63ad69e46995859f6/ui-com/getScrollList' }, { content: function (resp) {
+          return '<h3>'+ resp.data.list[0].des +'</h3><h3>'+ resp.data.list[1].des +'</h3>'
+        } })
+      });
+
+       // $.ajax({
+       //   url: 'https://www.easy-mock.com/mock/5b4304e63ad69e46995859f6/ui-com/getScrollList',
+       //   type: 'GET',
+       //   dataType: 'JSON',
+       //   timeout: 30000,
+       //   data: void 0,
+       //   contentType: 'application/json',
+       //   success: function (resp) {
+       //     console.log(resp);
+       //   },
+       //   error: function (_, status) {
+       //    console.log(status);
+       //   }
+       // });
        // $('#btn_remind').click(function () {
        //  var remind = new Dialog({
        //    onRemove: function () {

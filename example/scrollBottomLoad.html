@@ -31,15 +31,21 @@
     <script src="../src/util/fetch.js"></script>
     <script src="../src/behavior/ScrollBottomLoad.js"></script>
     <script>
-      new ScrollBottomLoad({
-        el: $('.xx'),
-        url: 'https://www.easy-mock.com/mock/5b4304e63ad69e46995859f6/ui-com/getScrollList',
-        onScrollToBottom: function (el, resp) {
-          for(var i = 0, len = resp.length; i < len; i++) {
-            el.append('<div style="height: 200px;background-color:blue"><h1>'+ resp[i].title +'</h1><p>'+ resp[i].des +'</p></div>');
-          }
-        }
-      });
+      // new ScrollBottomLoad({
+      //   el: $('.xx'),
+      //   url: 'https://www.easy-mock.com/mock/5b4304e63ad69e46995859f6/ui-com/getScrollList',
+      //   onScrollToBottom: function (el, resp) {
+      //     for(var i = 0, len = resp.length; i < len; i++) {
+      //       el.append('<div style="height: 200px;background-color:blue"><h1>'+ resp[i].title +'</h1><p>'+ resp[i].des +'</p></div>');
+      //     }
+      //   }
+      // });
+      var c = true;
+var two = function () {
+  return false;
+}
+
+(c || two) && console.log('xxoo');
     </script>
   </body>
 </html>

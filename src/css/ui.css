@@ -128,10 +128,20 @@
 
 .ui-dialog-success > div, .ui-dialog-remind > div, .ui-dialog-warning > div {
   display: -webkit-box;
+  display: -moz-box;
+  display: box;
   padding-left: 60px;
   min-height: 40px;
   -webkit-box-align: center;
-  text-align: left; }
+  -moz-box-align: center;
+  box-align: center }
+
+.ui-dialog-success > .custom, .ui-dialog-remind > .custom, .ui-dialog-warning > .custom {
+  -webkit-box-pack: center;
+  -moz-box-pack: center;
+  box-pack: center;
+  height: 150px;
+  padding-left: 0; }
 
 .ui-dialog-footer {
   padding-bottom: 25px;
@@ -153,8 +163,7 @@
   text-decoration: none;}
 
 .ui-dialog-button:first-of-type {
-  margin-left: 0;
-}
+  margin-left: 0; }
 
 .ui-dialog-button-remind {
   background: #2486ff;
@@ -183,9 +192,17 @@
 .ui-dialog-button-default {
   background-color: #fff;
   border-color: #d0d0d5;
-  color: #4c5161;
-}
+  color: #4c5161; }
 
 .ui-dialog-button-default:hover {
-  border-color: #ababaf;
-}
+  border-color: #ababaf; }
+
+:root .ui-dialog-container .loading {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%); }
+
+:root .ui-dialog-container .loading svg {
+  width: 40px;
+  height: 40px; }

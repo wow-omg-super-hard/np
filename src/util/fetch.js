@@ -6,18 +6,16 @@
  * @Created
  */
 
-(function (root, factory, $, Dialog) {
+(function (root, factory, $) {
   if (typeof define !== 'undefined' && define.amd) {
-    define([ 'jQuery', 'Dialog' ], function ($, Dialog) {
-      return factory($, Dialog);
+    define([ 'jQuery' ], function ($) {
+      return factory($);
     });
   } else {
-    root.fetch = factory($, Dialog);
+    root.fetch = factory($);
   }
-})(this, function ($, Dialog) {
+})(this, function ($) {
   return function (url, method, data, success, error) {
-    if (!url) return;
-
     // 初始化错误弹出框
     var ajaxParams = {
       url: url,
@@ -28,8 +26,7 @@
       contentType: 'application/json',
       success: function (resp) {
         if (resp.errCode) {
-          new Dialog({ width: 300 }).alert('', '<p>'+ resp.errMsg +'</p>', null, 'warning');
-          error && error();
+          error && error(resp.errMsg);
           return;
         }
 
@@ -57,11 +54,10 @@
           errReason = '<p>可能是断网，您稍后再试，多试几次后若情况不变，欢迎反馈给我们</p>';
         }
 
-        new Dialog({ width: 300 }).alert('', errSubject + errReason, null, 'warning');
-        error && error();
+        error && error(errSubject + errReason);
       }
     };
 
     $.ajax(ajaxParams);
   }
-}, jQuery, Dialog);
+}, jQuery);

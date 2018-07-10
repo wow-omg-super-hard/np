@@ -5,17 +5,17 @@
  * Created 18-6-28
  */
 
-(function (root, factory, $) {
+(function (root, factory, $, fetch) {
   if (typeof define !== 'undefined' && define.amd) {
     // amd环境
-    define([ 'jquery' ], function ($) {
-      return factory($);
+    define([ 'jquery', 'fetch' ], function ($, fetch) {
+      return factory($, fetch);
     });
   } else {
     // 浏览器直接引用
-    root.Dialog = factory($);
+    root.Dialog = factory($, fetch);
   }
-})(this, function ($) {
+})(this, function ($, fetch) {
 // 元素class
 var splitter = '-';
 var prefix = 'ui-dialog';
@@ -39,8 +39,74 @@ var crossSVG = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y=
 // 'alert'弹出框的`！`svg
 var remindSVG = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 42.666 42.666" style="fill: #2486ff" xml:space="preserve"><g><path d="M16.899,38.233c0,2.448,1.984,4.433,4.434,4.433s4.434-1.984,4.434-4.433c0-2.451-1.984-4.435-4.434-4.435S16.899,35.782,16.899,38.233z"/><path d="M23.635,25V2c0-1.104-0.896-2-2-2s-2,0.896-2,2v23c0,1.104,0.896,2,2,2S23.635,26.104,23.635,25z"/></g></svg>';
 
+// 'custom'弹出框的`loading` svg
+var loadingSVG = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 429.354 429.354" style="enable-background:new 0 0 429.354 429.354;" xml:space="preserve" width="512px" height="512px"><g><g><path d="M372.53,82.843C336.673,30.958,277.621-0.009,214.55,0C108.512,0.115,22.644,86.17,22.759,192.208    c0.107,98.751,75.105,181.317,173.392,190.888L163.638,415.6c-3.178,3.07-3.266,8.134-0.196,11.312 c3.07,3.178,8.134,3.266,11.312,0.196c0.067-0.064,0.132-0.13,0.196-0.196l45.248-45.248c0.747-0.745,1.337-1.632,1.736-2.608    c0.809-1.957,0.809-4.155,0-6.112c-0.399-0.976-0.989-1.863-1.736-2.608l-45.248-45.248c-3.178-3.07-8.243-2.982-11.312,0.196    c-2.994,3.1-2.994,8.015,0,11.116l30.4,30.4C97.56,355.44,28.559,268.019,39.919,171.541S138.7,6.061,235.178,17.422    s165.48,98.781,154.119,195.259c-5.908,50.177-33.107,95.39-74.667,124.119c-3.691,2.428-4.714,7.389-2.286,11.08 c2.429,3.691,7.389,4.714,11.08,2.286c0.105-0.069,0.208-0.141,0.31-0.214C410.969,289.666,432.815,170.078,372.53,82.843z" fill="#00d8f0"/></g></g></svg>';
+
 // 是否在chrome运行
 var isWebkit = 'WebkitAppearance' in document.documentElement.style || typeof document.webkitHidden !== 'undefined';
+
+// 抽取构建弹出框相同的代码，作纯函数使用，用于解耦
+function quick (dialogType) {
+  var titleClass, createBody, defaultButtons;
+
+  if (dialogType === 'custom') {
+    titleClass = 'alert';
+    createBody = function (content, type) {
+      return $('<div class="'+ prefix + splitter + type +'"><div class="custom">'+ content +'</div></div>');
+    };
+    defaultButtons = [{}];
+  } else if (dialogType === 'confirm') {
+    titleClass = 'confirm';
+    createBody = function (content, type) {
+      return $('<div class="'+ prefix + splitter + type +'"><div>'+ content +'</div></div>').prepend('<i>'+ (type === 'remind' ? remindSVG : type === 'success' ? tickSVG : crossSVG) +'</i>');
+    };
+    defaultButtons = [{}, {}];
+  } else {
+    titleClass = 'alert';
+    createBody = function (content, type) {
+      return $('<div class="'+ prefix + splitter + type +'"><div>'+ content +'</div></div>').prepend('<i>'+ (type === 'remind' ? remindSVG : type === 'success' ? tickSVG : crossSVG) +'</i>');
+    };
+    defaultButtons = [{}];
+  }
+
+  return function (title, content, buttons, type) {
+    type || (type = 'remind');
+    var options = {
+      title: title || '',
+      content: $.isFunction(content) ? content() : (content || ''),
+      buttons: buttons || defaultButtons
+    };
+    var bodyChild;
+    // 如果写错了type，导致会写错class，所以引用不到，样式就会错乱
+    type !== 'remind' && type !== 'success' && type !== 'warning' && (type = 'remind');
+
+    // 添加对话框容器元素class
+    this.el.container.addClass(titleClass);
+
+    // 如果标题是纯文本
+    if (!/<[\w\W]*?>/.test(options.title)) {
+      options.title = '<p>'+ options.title +'</p>';
+    }
+
+    // 如果内容是纯文本
+    if (!/<[\w\W]*?>/.test(options.content)) {
+      options.content = '<p>'+ options.content +'</p>';
+    }
+
+    bodyChild = createBody(options.content, type);
+
+    // 添加title的内容
+    this.el.title.html(options.title);
+
+    // 添加body的内容
+    this.el.body.empty().append(bodyChild);
+
+    // 添加footer的内容
+    this._createFooterContent(options.buttons, type)._show();
+
+    return this;
+  };
+}
 
 var Dialog = function (options) {
   options || (options = {});
@@ -52,14 +118,14 @@ var Dialog = function (options) {
     onRemove: $.noop
   };
 
-  var params = $.extend({}, defaults, options);
+  var options = $.extend({}, defaults, options);
   var el = this.el = {};
   var dialog = null;
 
-  this.width = params.width;
+  this.width = options.width;
   this.callbacks = {
-    onShow: params.onShow,
-    onRemove: params.onRemove
+    onShow: options.onShow,
+    onRemove: options.onRemove
   };
 
   // 标识当前对话框的显隐状态，针对不同状态删除或恢复滚动条
@@ -69,7 +135,7 @@ var Dialog = function (options) {
   el.container = window.addEventListener ? $('<dialog class="'+ prefixRoot +'"></dialog>') : $('<div class="'+ prefixRoot +'"></div>');
 
   // 弹框主体
-  el.dialog = $('<div class="'+ prefixDialog +'"></div>').css('width', params.width);
+  el.dialog = $('<div class="'+ prefixDialog +'"></div>').css('width', options.width);
 
   // 标题
   el.title = $('<div class="'+ prefixTitle +'"></div>');
@@ -94,7 +160,7 @@ var Dialog = function (options) {
   // 如果页面中存在弹框，则将新创建的弹框（处理定时器控制的弹框或ajax返回需要弹框的多次出现）
   if ((dialog = $('.'+ prefixRoot +'')).length) {
     dialog.eq(0).before(el.container.css({
-      zIndex: dialog.eq(0).css('z-index') + 1
+      zIndex: parseInt(dialog.eq(0).css('z-index')) + 1
     }));
   } else {
     $(document.body).append(el.container);
@@ -110,92 +176,43 @@ var Dialog = function (options) {
  * @param { Array(JSON) } buttons 按钮信息
  * @param { String } type 弹出框类型
  */
-Dialog.prototype.alert = function (title, content, buttons, type) {
-  var params = {
-    title: '',
-    content: $.isFunction(content) ? content() : (content || ''),
-    buttons: buttons || [{ text: '确定', type: type }],
-    type: type || 'remind'
-  };
-  var contentChild = null;
-
-  // 如果写错了type，导致会写错class，所以引用不到，样式就会错乱
-  params.type !== 'remind' && params.type !== 'success' && params.type !== 'warning' && (params.type = 'remind');
-
-  // 添加对话框容器元素class
-  this.el.container.addClass(prefix + splitter + 'alert');
-
-  // 如果标题是纯文本
-  if (!/<[\w\W]*?>/.test(params.title)) {
-    params.title = '<p>'+ params.title +'</p>';
-  }
-
-  // 如果内容是纯文本
-  if (!/<[\w\W]*?>/.test(params.content)) {
-    params.content = '<p>'+ params.content +'</p>';
-  }
-
-  contentChild = $('<div class="'+ prefix + splitter + params.type +'"><div>'+ params.content +'</div></div>').prepend('<i>'+ (params.type === 'remind' ? remindSVG : params.type === 'success' ? tickSVG : crossSVG) +'</i>');
-
-  // 添加title
-  this.el.title.html(params.title);
-
-  // 添加content
-  this.el.body.empty().append(contentChild);
-
-  //添加footer并且显示对话框
-  this._createFooterContent(params.buttons, params.type)._show();
-
-  return this;
-};
+Dialog.prototype.alert = quick('alert');
 
 /**
  * confirm 确认对话框
+ * 参数参考上面
  */
-Dialog.prototype.confirm = function (title, content, buttons, type) {
-  var params = {
-    title: title || '',
-    content: $.isFunction(content) ? content() : (content || ''),
-    buttons: buttons || [{ type: type, text: '确定' }, {}],
-    type: type || 'remind'
-  };
+Dialog.prototype.confirm = quick('confirm');
 
-  var contentChild = null;
+/**
+ * custom 自定义弹出框
+ * 参数参考上面
+ */
+Dialog.prototype.custom = quick('custom');
 
-  // 因为confirm对话框必须有两个按钮，检查是否小于2个或大于两个
-  if (params.buttons.length < 2) {
-    params.buttons.push({});
-  } else if (params.buttons.length > 2) {
-    params.buttons.splice(params.buttons.length - 1, 1);
-  }
+/**
+ * ajax请求弹出框
+ * 就是先创建菊花弹出框，再发送一个ajax，ajax请求完成后，消除菊花弹出框，根据内容打开新的弹出框
+ * ajaxOptions.url 是必填的
+ * options.content 是必填的，必须是函数类型
+ */
+Dialog.prototype.ajax = function (ajaxOptions, options) {
+  if (!ajaxOptions.url) return;
 
-  // 如果写错了type，导致会写错class，所以引用不到，样式就会错乱
-  params.type !== 'remind' && params.type !== 'success' && params.type !== 'warning' && (params.type = 'remind');
+  var self = this;
 
-  this.el.container.addClass(prefix + splitter + 'confirm');
+  // 弹出菊花弹出框
+  this.custom(null, function () {
+    return '<div class="loading">'+ loadingSVG +'</div>';
+  }, null);
 
-  // 如果标题是纯文本
-  if (!/<[\w\W]*?>/.test(params.title)) {
-    params.title = '<p>'+ params.title +'</p>';
-  }
-
-  // 如果内容是纯文本
-  if (!/<[\w\W]*?>/.test(params.content)) {
-    params.content = '<p>'+ params.content +'</p>';
-  }
-
-  contentChild = $('<div class="'+ prefix + splitter + params.type +'"><div>'+ params.content +'</div></div>').prepend('<i>'+ (params.type === 'remind' ? remindSVG : params.type === 'success' ? tickSVG : crossSVG) +'</i>');
-
-  // 添加标题
-  this.el.title.html(params.title);
-
-  // 添加内容
-  this.el.body.empty().append(contentChild);
-
-  // 添加尾部内容并且显示确认对话框
-  this._createFooterContent(params.buttons, params.type)._show();
-
-  return this;
+  // 发送ajax
+  fetch(ajaxOptions.url, ajaxOptions.method, ajaxOptions.data, function (resp) {
+    // 弹出得到内容的弹出框
+    self._switch(null, function () { return options.content(resp) }, null, 'success');
+  }, function (errMsg) {
+    self._switch(null, errMsg, null, 'warning');
+  });
 };
 
 Dialog.prototype._createFooterContent = function (buttons, type) {
@@ -218,19 +235,18 @@ Dialog.prototype._createFooterContent = function (buttons, type) {
  * 从一种状态(alert|confirm)切换成(confirm|alert)状态等
  * 其实就是将对话框里的title、body、footer替换内容
  */
-Dialog.prototype.switch = function (options) {
-  var defaults = {
-    title: '',
-    content: '',
-    buttons: [{}]
+Dialog.prototype._switch = function (title, content, buttons, type) {
+  var options = {
+    title: title || '',
+    content: content || '',
+    buttons: buttons || [{}]
   };
-  var type = options.type || 'remind';
-  var params = $.extend({}, defaults, options);
+  type || (type = 'remind');
 
   if (this.el && this.display) {
-    this.el.title.html(params.title);
-    this.el.body.html($.isFunction(content) ? content() : (content == null ? '' : content));
-    this._createFooterContent()._show(params.buttons, type);
+    this.el.title.html(options.title);
+    this.el.body.html($.isFunction(options.content) ? options.content() : options.content);
+    this._createFooterContent(options.buttons, type)._show();
   }
 
   return this;
@@ -280,4 +296,4 @@ Dialog.prototype.remove = function () {
 };
 
 return Dialog;
-}, jQuery);
+}, jQuery, fetch);
