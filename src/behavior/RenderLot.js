@@ -1,6 +1,6 @@
 /**
  * @RenderLot.js
- * @des 渲染大量数据
+ * @des 渲染大量DOM
  * @author zengwenbin
  * @date 18-7-11
  * @Created
@@ -107,7 +107,7 @@
       index = parseInt($(el).attr('index'));
 
       // index prop小于startIndex都视为在不可视区域在外的并且不是最后一个元素，都应该隐藏
-      // 或者是从下往上滚动，因为后面的索引肯定是大于当前索引
+      // 或者是从下往上滚动，最大索引在减小，那么大于最大索引的，就是可是区域外部的，也应该隐藏
       if (index < this.state.startIndex || index > this.state.endIndex) {
         $(el).hide();
       }
